@@ -2,6 +2,21 @@
 
 # Projet : Plateforme communautaire verticale pour les talents tech en Guinée
 
+## Documentation de conception
+
+Le dépôt contient maintenant le socle fonctionnel et technique du MVP :
+
+- [index de la documentation](docs/README.md) ;
+- [analyse MERISE](docs/merise/00-cadrage.md) : cadrage, dictionnaire,
+  MCD, MLD, MPD et traitements ;
+- [architecture applicative](docs/architecture/README.md) ;
+- [décisions d’architecture](docs/architecture/adr/) ;
+- [contrat API initial](docs/api/README.md) ;
+- [schéma PostgreSQL exécutable](database/schema.sql).
+
+Architecture retenue : monolithe modulaire, PostgreSQL comme source de vérité
+et réputation explicable construite depuis un journal d’événements.
+
 ## 1) Résumé exécutif
 
 L’idée est de créer une plateforme communautaire dédiée aux développeurs, ingénieurs, designers, étudiants tech et builders en Guinée, avec une extension progressive vers l’Afrique francophone.
@@ -549,5 +564,4 @@ Guneva
 Une plateforme verticale qui permet aux développeurs, designers et builders guinéens de montrer leurs projets, construire leur réputation, collaborer et accéder à des opportunités réelles.
 
 ***
-
 
