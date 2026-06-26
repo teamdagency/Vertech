@@ -38,9 +38,11 @@ Le cœur du projet est la **réputation basée sur des preuves réelles**, pas j
 
 Aujourd’hui, en Guinée et plus largement en Afrique francophone, il existe :
 - des développeurs compétents,
+- des ingénières IA très très compétents
 - des designers compétents,
 - des étudiants motivés,
 - des profils autodidactes très forts,
+- ect..
 
 mais il manque :
 - un espace clair pour les découvrir,
