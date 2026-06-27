@@ -6,21 +6,7 @@ import { DbService } from '../../drizzle/db.service';
 import { users, profiles } from '../../drizzle/schema';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-
-interface PgError {
-  code?: string;
-  constraint?: string;
-  cause?: PgError;
-}
-
-function findPgErrorCode(err: unknown): PgError | undefined {
-  let current = err as PgError | undefined;
-  while (current) {
-    if (current.code) return current;
-    current = current.cause;
-  }
-  return undefined;
-}
+import { mapPgError } from '../../common/pg-error.util';
 
 @Injectable()
 export class IdentityService {
@@ -58,17 +44,10 @@ export class IdentityService {
 
       return this.issueSession(created.user.id, created.profile.id, 'member');
     } catch (err) {
-      const pgErr = findPgErrorCode(err);
-      if (pgErr?.code === '23505') {
-        if (pgErr.constraint?.includes('email')) {
-          throw new ConflictException('Cette adresse e-mail est déjà utilisée.');
-        }
-        if (pgErr.constraint?.includes('username')) {
-          throw new ConflictException("Ce nom d'utilisateur est déjà pris.");
-        }
-        throw new ConflictException('Ressource déjà existante.');
-      }
-      throw err;
+      throw mapPgError(err, {
+        users_email_key: 'Cette adresse e-mail est déjà utilisée.',
+        profiles_username_key: "Ce nom d'utilisateur est déjà pris.",
+      });
     }
   }
 
