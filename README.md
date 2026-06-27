@@ -563,7 +563,7 @@ Je te conseille de présenter cette idée à ton cofondateur comme suit :
 ## 20) Formulation courte du projet
 
 ### Nom provisoire
-Guneva
+KonfIA
 ### Pitch 1 phrase
 Une plateforme verticale qui permet aux développeurs, designers et builders guinéens de montrer leurs projets, construire leur réputation, collaborer et accéder à des opportunités réelles.
 
