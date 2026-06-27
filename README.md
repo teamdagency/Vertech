@@ -12,7 +12,9 @@ Le dépôt contient maintenant le socle fonctionnel et technique du MVP :
 - [architecture applicative](docs/architecture/README.md) ;
 - [décisions d’architecture](docs/architecture/adr/) ;
 - [contrat API initial](docs/api/README.md) ;
-- [schéma PostgreSQL exécutable](database/schema.sql).
+- [schéma PostgreSQL exécutable](database/schema.sql) ;
+- [squelette backend NestJS + Drizzle](app/README.md) : 9 modules métier,
+  connexion PostgreSQL réelle, `GET /api/v1/health` opérationnel.
 
 Architecture retenue : monolithe modulaire, PostgreSQL comme source de vérité
 et réputation explicable construite depuis un journal d’événements.
