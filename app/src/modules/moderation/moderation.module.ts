@@ -1,18 +1,23 @@
 import { Module } from '@nestjs/common';
+import { IdentityModule } from '../identity/identity.module';
+import { ModerationController } from './moderation.controller';
+import { ModerationService } from './moderation.service';
 
 /**
- * Module Moderation — frontière métier définie dans docs/architecture/README.md.
+ * Module Moderation — frontière métier définie dans
+ * docs/architecture/README.md.
  *
  * Responsabilité : Signalements, décisions et audit
  * N'efface jamais l'historique sans trace (-> audit_logs).
  *
- * Squelette de base : providers/controllers à ajouter au fil de
- * l'implémentation du contrat API (docs/api/README.md).
+ * Note de portée : la promotion d'un compte en role=moderator/admin
+ * n'a pas d'API dédiée pour cette phase (action DB directe) — aucun
+ * module Admin n'existe encore.
  */
 @Module({
-  imports: [],
-  controllers: [],
-  providers: [],
-  exports: [],
+  imports: [IdentityModule],
+  controllers: [ModerationController],
+  providers: [ModerationService],
+  exports: [ModerationService],
 })
 export class ModerationModule {}
