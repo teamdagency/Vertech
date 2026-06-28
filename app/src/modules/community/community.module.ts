@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { IdentityModule } from '../identity/identity.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { CommunityController } from './community.controller';
 import { CommunityService } from './community.service';
 
@@ -10,7 +11,7 @@ import { CommunityService } from './community.service';
  * N'authentifie pas les comptes (-> Identity).
  */
 @Module({
-  imports: [IdentityModule],
+  imports: [IdentityModule, NotificationsModule],
   controllers: [CommunityController],
   providers: [CommunityService],
   exports: [CommunityService],

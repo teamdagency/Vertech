@@ -16,6 +16,7 @@ import {
 import { EndorseSkillDto } from './dto/endorse-skill.dto';
 import { RecommendDto } from './dto/recommend.dto';
 import { mapPgError } from '../../common/pg-error.util';
+import { NotificationsService } from '../notifications/notifications.service';
 
 type ReputationDimension = (typeof reputationDimension.enumValues)[number];
 type DrizzleDb = NodePgDatabase<typeof schema>;
@@ -35,7 +36,10 @@ const MAX_POINTS_PER_SOURCE = 15;
 
 @Injectable()
 export class TrustService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(
+    private readonly dbService: DbService,
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
   /**
    * RG-09 (couple validateur/profil/compétence unique, en DB) + garde-fous
@@ -59,7 +63,7 @@ export class TrustService {
     const points = (dto.strength ?? 1) * 3 * multiplier;
 
     try {
-      return await this.dbService.db.transaction(async (tx) => {
+      const endorsement = await this.dbService.db.transaction(async (tx) => {
         const [endorsement] = await tx
           .insert(endorsements)
           .values({
@@ -86,6 +90,17 @@ export class TrustService {
         await this.recalculate(tx, recipientId, 'technical');
         return endorsement;
       });
+
+      await this.notificationsService.create({
+        recipientId,
+        actorId: endorserId,
+        type: 'skill_endorsed',
+        entityType: 'endorsement',
+        entityId: endorsement.id,
+        payload: { skillId: dto.skillId, strength: dto.strength ?? 1 },
+      });
+
+      return endorsement;
     } catch (err) {
       throw mapPgError(err, CONSTRAINT_MESSAGES);
     }
@@ -101,7 +116,7 @@ export class TrustService {
     const points = 5 * multiplier;
 
     try {
-      return await this.dbService.db.transaction(async (tx) => {
+      const recommendation = await this.dbService.db.transaction(async (tx) => {
         // MVP : pas encore de file de modération (-> module Moderation à venir),
         // on publie directement plutôt que de laisser en 'pending' indéfiniment.
         const [recommendation] = await tx
@@ -129,6 +144,17 @@ export class TrustService {
         await this.recalculate(tx, recipientId, 'collaboration');
         return recommendation;
       });
+
+      await this.notificationsService.create({
+        recipientId,
+        actorId: authorId,
+        type: 'recommendation_received',
+        entityType: 'recommendation',
+        entityId: recommendation.id,
+        payload: { relationship: dto.relationship },
+      });
+
+      return recommendation;
     } catch (err) {
       throw mapPgError(err, CONSTRAINT_MESSAGES);
     }

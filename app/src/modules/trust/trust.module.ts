@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { IdentityModule } from '../identity/identity.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { TrustController } from './trust.controller';
 import { TrustService } from './trust.service';
 
@@ -11,7 +12,7 @@ import { TrustService } from './trust.service';
  * Ne modifie pas une preuve source (-> Projects/Skills).
  */
 @Module({
-  imports: [IdentityModule],
+  imports: [IdentityModule, NotificationsModule],
   controllers: [TrustController],
   providers: [TrustService],
   exports: [TrustService],

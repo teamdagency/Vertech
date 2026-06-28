@@ -15,6 +15,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { CursorPageDto } from './dto/cursor-page.dto';
 import { mapPgError } from '../../common/pg-error.util';
 import { decodeCursor, encodeCursor } from '../../common/cursor.util';
+import { NotificationsService } from '../notifications/notifications.service';
 
 const CONSTRAINT_MESSAGES = {
   community_groups_slug_key: 'Ce slug de groupe est déjà utilisé.',
@@ -25,7 +26,10 @@ export type ReactionKind = (typeof REACTION_KINDS)[number];
 
 @Injectable()
 export class CommunityService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(
+    private readonly dbService: DbService,
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
   /**
    * Pas de trigger DB pour les groupes (contrairement à projects) :
@@ -231,7 +235,7 @@ export class CommunityService {
   }
 
   async addComment(postId: string, authorId: string, dto: CreateCommentDto) {
-    await this.assertCanViewPost(postId, authorId);
+    const post = await this.assertCanViewPost(postId, authorId);
 
     // Pré-vérification applicative (le trigger SQL validate_comment_parent
     // lèverait sinon une exception brute peu exploitable côté API).
@@ -252,6 +256,16 @@ export class CommunityService {
         .insert(comments)
         .values({ postId, authorId, parentId: dto.parentId, body: dto.body })
         .returning();
+
+      await this.notificationsService.create({
+        recipientId: post.authorId,
+        actorId: authorId,
+        type: 'comment_received',
+        entityType: 'comment',
+        entityId: comment.id,
+        payload: { postId },
+      });
+
       return comment;
     } catch (err) {
       throw mapPgError(err);
