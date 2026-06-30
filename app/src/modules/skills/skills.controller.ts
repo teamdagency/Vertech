@@ -13,6 +13,11 @@ export class SkillsController {
     return this.skillsService.search(query);
   }
 
+  @Get('profiles/:id/skills')
+  listForProfile(@Param('id') profileId: string) {
+    return this.skillsService.listForProfile(profileId);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Put('me/skills/:skillId')
   declare(

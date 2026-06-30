@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { and, eq, isNull } from 'drizzle-orm';
 import { DbService } from '../../drizzle/db.service';
-import { projects, projectMembers, projectSkills, projectMedia, skills } from '../../drizzle/schema';
+import { projects, projectMembers, projectSkills, projectMedia, skills, profiles } from '../../drizzle/schema';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { AddMemberDto } from './dto/add-member.dto';
@@ -87,12 +87,15 @@ export class ProjectsService {
       this.dbService.db
         .select({
           profileId: projectMembers.profileId,
+          username: profiles.username,
+          displayName: profiles.displayName,
           role: projectMembers.role,
           contribution: projectMembers.contribution,
           isOwner: projectMembers.isOwner,
           joinedAt: projectMembers.joinedAt,
         })
         .from(projectMembers)
+        .innerJoin(profiles, eq(profiles.id, projectMembers.profileId))
         .where(and(eq(projectMembers.projectId, project.id), isNull(projectMembers.leftAt))),
       this.dbService.db
         .select({ skillId: skills.id, name: skills.name, slug: skills.slug })

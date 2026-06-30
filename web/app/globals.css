@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #14191b;
+  background-image: radial-gradient(circle at 20% -10%, rgba(46, 58, 107, 0.35), transparent 60%);
+}
+
+*:focus-visible {
+  outline: 2px solid #c98a2e;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
